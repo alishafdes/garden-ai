@@ -4,6 +4,10 @@
 
 [![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-green)](https://lovable.dev)
 
+<a href="https://garden-ai.lovable.app/dashboard">
+  <img src="https://cdn.vectorstock.com/i/750p/67/65/try-it-rounded-modern-black-ui-element-vector-62516765.avif" alt="Try it" width="160" />
+</a>
+
 ---
 
 ## 🌱 Overview
