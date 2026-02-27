@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { LogOut, Sprout, Sun, Droplets, Calendar, Plus, Check, Leaf, MapPin } from "lucide-react";
 import { AddPlantDialog } from "@/components/AddPlantDialog";
 import { ProfileSetup } from "@/components/ProfileSetup";
+import { WeatherCard } from "@/components/WeatherCard";
 import { useState } from "react";
 
 const Dashboard = () => {
@@ -136,6 +137,13 @@ const Dashboard = () => {
               Here's what your garden needs today.
             </p>
           </motion.div>
+
+          {/* Weather */}
+          {profile?.zip_code && (
+            <motion.div variants={itemVariants}>
+              <WeatherCard zipCode={profile.zip_code} />
+            </motion.div>
+          )}
 
           {/* Stats Row */}
           <motion.div variants={itemVariants} className="grid grid-cols-3 gap-4">
