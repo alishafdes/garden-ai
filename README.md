@@ -1,73 +1,107 @@
-# Welcome to your Lovable project
+# 🌿 The Empathetic Gardener
 
-## Project info
+**AI-powered garden companion that makes plant care intuitive, personal, and delightful.**
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+[![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-green)](https://lovable.dev)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🌱 Overview
 
-**Use Lovable**
+The Empathetic Gardener is a mobile-first web application that helps home gardeners of all experience levels care for their plants with confidence. It combines real-time weather data, AI-powered plant identification, and personalized maintenance schedules to reduce the guesswork in gardening.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🎯 Problem Statement
 
-Changes made via Lovable will be committed automatically to this repo.
+Over 77% of U.S. households engage in gardening, yet beginners often struggle with inconsistent care, pest identification, and seasonal planning. Existing tools are either too complex for casual gardeners or too simplistic for those wanting to grow. The Empathetic Gardener bridges this gap with an empathetic, intelligent approach to plant care.
 
-**Use your preferred IDE**
+## ✨ Key Features (MVP)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+| Feature | Description |
+|---|---|
+| **🔐 Authentication** | Email-based signup & login with secure session management |
+| **👤 Profile Setup** | Zip code, experience level, and personalized onboarding |
+| **🌦️ Weather Integration** | Real-time conditions via Open-Meteo API with smart watering recommendations |
+| **📸 AI Plant Scanner** | Photograph any plant to get instant identification, care tips, and growing info |
+| **🌻 Plant Inventory** | Track your garden plants with health scores, locations, and care schedules |
+| **📋 Task Management** | Personalized daily tasks for watering, pruning, and maintenance |
+| **📊 Garden Dashboard** | At-a-glance stats, weather, tasks, and plant health overview |
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 👥 Target Personas
 
-Follow these steps:
+- **Sarah** — Aspiring Home Gardener (25-35, beginner, wants structured guidance)
+- **Miguel** — Weekend Warrior (35-50, intermediate, time-constrained)
+- **Grace** — Senior Green Thumb (60+, experienced, needs accessibility)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🏗️ Tech Stack
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+| Layer | Technology |
+|---|---|
+| **Frontend** | React 18, TypeScript, Tailwind CSS, Framer Motion |
+| **UI Components** | shadcn/ui (Radix primitives) |
+| **Backend** | Lovable Cloud — Auth, Database, Edge Functions, Storage |
+| **AI** | Lovable AI Gateway (Google Gemini 3 Flash) for plant identification |
+| **Weather** | Open-Meteo API (free, no API key required) |
+| **Routing** | React Router v6 |
+| **State** | TanStack React Query |
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 📁 Project Structure
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+├── docs/                    # Product documentation & PRD
+│   ├── Garden_App.pdf       # Full PRD, personas, and roadmap
+│   └── README.md            # Documentation summary
+├── src/
+│   ├── components/          # React components
+│   │   ├── AddPlantDialog   # Add plants from catalog
+│   │   ├── PlantScannerDialog # AI plant identification
+│   │   ├── ProfileSetup     # User onboarding
+│   │   ├── ProtectedRoute   # Auth guard
+│   │   ├── WeatherCard      # Weather + watering recommendations
+│   │   └── ui/              # shadcn/ui design system
+│   ├── hooks/               # Custom hooks (useAuth)
+│   ├── integrations/        # Backend client & types
+│   └── pages/               # Route pages
+│       ├── Index            # Landing page
+│       ├── Auth             # Login / Signup
+│       └── Dashboard        # Main app experience
+├── supabase/
+│   ├── functions/           # Edge functions
+│   │   ├── get-weather/     # Weather data + watering logic
+│   │   └── identify-plant/  # AI plant identification
+│   └── migrations/          # Database schema
+└── tailwind.config.ts       # Garden-themed design tokens
 ```
 
-**Edit a file directly in GitHub**
+## 🎨 Design System
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The app uses a custom **garden-inspired** design system:
 
-**Use GitHub Codespaces**
+- **Typography**: Fraunces (serif headings) + DM Sans (body)
+- **Palette**: Earthy greens, warm accents, sky blues
+- **Tokens**: `--garden-leaf`, `--garden-earth`, `--garden-sun`, `--garden-sky`, `--garden-bloom`
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🚀 Getting Started
 
-## What technologies are used for this project?
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Start development server: `npm run dev`
+4. Open [http://localhost:5173](http://localhost:5173)
 
-This project is built with:
+> **Note**: Backend services (auth, database, AI, weather) are powered by Lovable Cloud and work automatically.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🗺️ Roadmap
 
-## How can I deploy this project?
+- [ ] Succession planting calendar
+- [ ] Community Q&A forum
+- [ ] Pest & disease diagnosis via AI
+- [ ] Garden journal with photo timeline
+- [ ] Push notifications for care reminders
+- [ ] Marketplace for local nurseries
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## 📄 Documentation
 
-## Can I connect a custom domain to my Lovable project?
+See [`docs/`](./docs/) for the full PRD, market research, user personas, and jobs-to-be-done analysis.
 
-Yes, you can!
+## 📝 License
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Private project — all rights reserved.
