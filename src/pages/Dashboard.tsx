@@ -5,16 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { LogOut, Sprout, Sun, Droplets, Calendar, Plus, Check, Leaf, MapPin } from "lucide-react";
+import { LogOut, Sprout, Sun, Droplets, Calendar, Plus, Check, Leaf, MapPin, ScanLine } from "lucide-react";
 import { AddPlantDialog } from "@/components/AddPlantDialog";
 import { ProfileSetup } from "@/components/ProfileSetup";
 import { WeatherCard } from "@/components/WeatherCard";
+import { PlantScannerDialog } from "@/components/PlantScannerDialog";
 import { useState } from "react";
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const queryClient = useQueryClient();
   const [addPlantOpen, setAddPlantOpen] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user?.id],
@@ -227,10 +229,16 @@ const Dashboard = () => {
           <motion.div variants={itemVariants}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-serif font-bold">My Plants</h2>
-              <Button size="sm" onClick={() => setAddPlantOpen(true)}>
-                <Plus className="w-4 h-4 mr-1" />
-                Add Plant
-              </Button>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => setScannerOpen(true)}>
+                  <ScanLine className="w-4 h-4 mr-1" />
+                  Scan Plant
+                </Button>
+                <Button size="sm" onClick={() => setAddPlantOpen(true)}>
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add Plant
+                </Button>
+              </div>
             </div>
 
             {gardenPlants.length === 0 ? (
@@ -296,6 +304,7 @@ const Dashboard = () => {
       </main>
 
       <AddPlantDialog open={addPlantOpen} onOpenChange={setAddPlantOpen} />
+      <PlantScannerDialog open={scannerOpen} onOpenChange={setScannerOpen} />
     </div>
   );
 };
