@@ -1,4 +1,4 @@
-# 🌿 The Empathetic Gardener
+# 🌿 GardenAI
 
 **AI-powered garden companion that makes plant care intuitive, personal, and delightful.**
 
@@ -8,7 +8,7 @@
 
 ## 🌱 Overview
 
-The Empathetic Gardener is a mobile-first web application that helps home gardeners of all experience levels care for their plants with confidence. It combines real-time weather data, AI-powered plant identification, and personalized maintenance schedules to reduce the guesswork in gardening.
+The GardenAI is a mobile-first web application that helps home gardeners of all experience levels care for their plants with confidence. It combines real-time weather data, AI-powered plant identification, and personalized maintenance schedules to reduce the guesswork in gardening.
 
 ## 🎯 Problem Statement
 
