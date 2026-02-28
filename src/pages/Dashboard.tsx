@@ -5,18 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { LogOut, Sprout, Sun, Droplets, Calendar, Plus, Check, Leaf, MapPin, ScanLine } from "lucide-react";
+import { LogOut, Sprout, Sun, Droplets, Calendar, Plus, Check, Leaf, MapPin, ScanLine, LayoutGrid, Pencil, Trash2 } from "lucide-react";
 import { AddPlantDialog } from "@/components/AddPlantDialog";
 import { ProfileSetup } from "@/components/ProfileSetup";
 import { WeatherCard } from "@/components/WeatherCard";
 import { PlantScannerDialog } from "@/components/PlantScannerDialog";
+import { GardenSectionDialog } from "@/components/GardenSectionDialog";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [addPlantOpen, setAddPlantOpen] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
+  const [sectionDialogOpen, setSectionDialogOpen] = useState(false);
+  const [editingSection, setEditingSection] = useState<any>(null);
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user?.id],
@@ -40,6 +45,20 @@ const Dashboard = () => {
         .select("*, plants(*)")
         .eq("user_id", user!.id)
         .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const { data: sections = [] } = useQuery({
+    queryKey: ["garden_sections", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("garden_sections")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("name");
       if (error) throw error;
       return data;
     },
@@ -75,18 +94,26 @@ const Dashboard = () => {
     },
   });
 
+  const deleteSection = useMutation({
+    mutationFn: async (sectionId: string) => {
+      const { error } = await supabase.from("garden_sections").delete().eq("id", sectionId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["garden_sections"] });
+      queryClient.invalidateQueries({ queryKey: ["garden_plants"] });
+      toast({ title: "Section deleted" });
+    },
+  });
+
   if (profile && !profile.zip_code) {
     return <ProfileSetup />;
   }
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
   };
-
   const itemVariants = {
     hidden: { opacity: 0, y: 16 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
@@ -97,6 +124,48 @@ const Dashboard = () => {
     if (score >= 40) return "text-accent";
     return "text-destructive";
   };
+
+  // Group plants by section
+  const unsectionedPlants = gardenPlants.filter((gp: any) => !gp.section_id);
+  const plantsBySection = sections.map((section: any) => ({
+    ...section,
+    plants: gardenPlants.filter((gp: any) => gp.section_id === section.id),
+  }));
+
+  const renderPlantCard = (gp: any) => (
+    <motion.div key={gp.id} whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
+      <Card className="overflow-hidden">
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="font-serif font-semibold">
+                {gp.nickname || gp.plants?.common_name || "Unknown Plant"}
+              </h3>
+              {gp.plants?.scientific_name && (
+                <p className="text-xs text-muted-foreground italic">{gp.plants.scientific_name}</p>
+              )}
+            </div>
+            <span className={`text-lg font-serif font-bold ${getHealthColor(gp.health_score || 80)}`}>
+              {gp.health_score || 80}%
+            </span>
+          </div>
+          <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
+            {gp.plants?.sunlight && (
+              <span className="flex items-center gap-1"><Sun className="w-3 h-3" /> {gp.plants.sunlight}</span>
+            )}
+            {gp.plants?.watering_frequency && (
+              <span className="flex items-center gap-1"><Droplets className="w-3 h-3" /> {gp.plants.watering_frequency}</span>
+            )}
+          </div>
+          {gp.location && (
+            <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+              <MapPin className="w-3 h-3" /> {gp.location}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -124,12 +193,7 @@ const Dashboard = () => {
       </header>
 
       <main className="container px-4 py-8 max-w-5xl">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-8"
-        >
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
           {/* Welcome */}
           <motion.div variants={itemVariants}>
             <h1 className="text-3xl font-serif font-bold">
@@ -201,9 +265,7 @@ const Dashboard = () => {
                         <div>
                           <p className="font-sans font-medium text-sm">{task.title}</p>
                           <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary" className="text-xs">
-                              {task.task_type}
-                            </Badge>
+                            <Badge variant="secondary" className="text-xs">{task.task_type}</Badge>
                             <span className="text-xs text-muted-foreground">
                               Due: {new Date(task.due_date).toLocaleDateString()}
                             </span>
@@ -225,11 +287,83 @@ const Dashboard = () => {
             </Card>
           </motion.div>
 
-          {/* My Plants */}
+          {/* Garden Sections */}
+          {sections.length > 0 && (
+            <motion.div variants={itemVariants}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-serif font-bold flex items-center gap-2">
+                  <LayoutGrid className="w-5 h-5 text-primary" />
+                  Garden Sections
+                </h2>
+                <Button size="sm" variant="outline" onClick={() => { setEditingSection(null); setSectionDialogOpen(true); }}>
+                  <Plus className="w-4 h-4 mr-1" />
+                  New Section
+                </Button>
+              </div>
+
+              <div className="space-y-6">
+                {plantsBySection.map((section: any) => (
+                  <Card key={section.id}>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="font-serif text-lg flex items-center gap-2">
+                          <span className="text-xl">{section.icon}</span>
+                          {section.name}
+                          <Badge variant="secondary" className="ml-1 text-xs">{section.plants.length} plants</Badge>
+                        </CardTitle>
+                        <div className="flex gap-1">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8"
+                            onClick={() => { setEditingSection(section); setSectionDialogOpen(true); }}
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 text-destructive hover:text-destructive"
+                            onClick={() => deleteSection.mutate(section.id)}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                      {section.description && (
+                        <CardDescription>{section.description}</CardDescription>
+                      )}
+                    </CardHeader>
+                    <CardContent>
+                      {section.plants.length === 0 ? (
+                        <p className="text-muted-foreground text-sm text-center py-4">
+                          No plants in this section yet. Add a plant and assign it here!
+                        </p>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {section.plants.map(renderPlantCard)}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* My Plants (unsectioned + create section CTA) */}
           <motion.div variants={itemVariants}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-serif font-bold">My Plants</h2>
+              <h2 className="text-xl font-serif font-bold">
+                {sections.length > 0 ? "Unsorted Plants" : "My Plants"}
+              </h2>
               <div className="flex gap-2">
+                {sections.length === 0 && (
+                  <Button size="sm" variant="outline" onClick={() => { setEditingSection(null); setSectionDialogOpen(true); }}>
+                    <LayoutGrid className="w-4 h-4 mr-1" />
+                    New Section
+                  </Button>
+                )}
                 <Button size="sm" variant="outline" onClick={() => setScannerOpen(true)}>
                   <ScanLine className="w-4 h-4 mr-1" />
                   Scan Plant
@@ -255,48 +389,13 @@ const Dashboard = () => {
                   </Button>
                 </CardContent>
               </Card>
+            ) : unsectionedPlants.length === 0 && sections.length > 0 ? (
+              <p className="text-muted-foreground text-sm text-center py-4">
+                All plants are organized in sections! 🎉
+              </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {gardenPlants.map((gp: any) => (
-                  <motion.div key={gp.id} whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
-                    <Card className="overflow-hidden">
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="font-serif font-semibold">
-                              {gp.nickname || gp.plants?.common_name || "Unknown Plant"}
-                            </h3>
-                            {gp.plants?.scientific_name && (
-                              <p className="text-xs text-muted-foreground italic">
-                                {gp.plants.scientific_name}
-                              </p>
-                            )}
-                          </div>
-                          <span className={`text-lg font-serif font-bold ${getHealthColor(gp.health_score || 80)}`}>
-                            {gp.health_score || 80}%
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
-                          {gp.plants?.sunlight && (
-                            <span className="flex items-center gap-1">
-                              <Sun className="w-3 h-3" /> {gp.plants.sunlight}
-                            </span>
-                          )}
-                          {gp.plants?.watering_frequency && (
-                            <span className="flex items-center gap-1">
-                              <Droplets className="w-3 h-3" /> {gp.plants.watering_frequency}
-                            </span>
-                          )}
-                        </div>
-                        {gp.location && (
-                          <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
-                            <MapPin className="w-3 h-3" /> {gp.location}
-                          </p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
+                {(sections.length > 0 ? unsectionedPlants : gardenPlants).map(renderPlantCard)}
               </div>
             )}
           </motion.div>
@@ -305,6 +404,11 @@ const Dashboard = () => {
 
       <AddPlantDialog open={addPlantOpen} onOpenChange={setAddPlantOpen} />
       <PlantScannerDialog open={scannerOpen} onOpenChange={setScannerOpen} />
+      <GardenSectionDialog
+        open={sectionDialogOpen}
+        onOpenChange={setSectionDialogOpen}
+        editSection={editingSection}
+      />
     </div>
   );
 };

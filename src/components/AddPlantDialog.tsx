@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Leaf, Sun, Droplets, Search } from "lucide-react";
 
@@ -22,7 +23,22 @@ export const AddPlantDialog = ({ open, onOpenChange }: AddPlantDialogProps) => {
   const [selectedPlant, setSelectedPlant] = useState<any>(null);
   const [nickname, setNickname] = useState("");
   const [location, setLocation] = useState("");
+  const [sectionId, setSectionId] = useState<string>("");
   const [loading, setLoading] = useState(false);
+
+  const { data: sections = [] } = useQuery({
+    queryKey: ["garden_sections", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("garden_sections")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
 
   const { data: plants = [] } = useQuery({
     queryKey: ["plants_catalog"],
@@ -48,6 +64,7 @@ export const AddPlantDialog = ({ open, onOpenChange }: AddPlantDialogProps) => {
         plant_id: selectedPlant.id,
         nickname: nickname || null,
         location: location || null,
+        section_id: sectionId || null,
       });
       if (error) throw error;
 
@@ -67,6 +84,7 @@ export const AddPlantDialog = ({ open, onOpenChange }: AddPlantDialogProps) => {
       setSelectedPlant(null);
       setNickname("");
       setLocation("");
+      setSectionId("");
       setSearch("");
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -147,6 +165,24 @@ export const AddPlantDialog = ({ open, onOpenChange }: AddPlantDialogProps) => {
                 placeholder="e.g. Backyard raised bed"
               />
             </div>
+
+            {sections.length > 0 && (
+              <div className="space-y-2">
+                <Label>Garden Section (optional)</Label>
+                <Select value={sectionId} onValueChange={setSectionId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a section" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sections.map((s: any) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.icon} {s.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={() => setSelectedPlant(null)}>
