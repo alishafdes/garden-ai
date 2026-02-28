@@ -24,6 +24,7 @@ export type Database = {
           notes: string | null
           plant_id: string | null
           planted_date: string | null
+          section_id: string | null
           updated_at: string
           user_id: string
         }
@@ -36,6 +37,7 @@ export type Database = {
           notes?: string | null
           plant_id?: string | null
           planted_date?: string | null
+          section_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -48,6 +50,7 @@ export type Database = {
           notes?: string | null
           plant_id?: string | null
           planted_date?: string | null
+          section_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -59,7 +62,44 @@ export type Database = {
             referencedRelation: "plants"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "garden_plants_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "garden_sections"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      garden_sections: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       garden_tasks: {
         Row: {
