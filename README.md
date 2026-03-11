@@ -84,12 +84,6 @@ The app uses a custom **garden-inspired** design system:
 - **Palette**: Earthy greens, warm accents, sky blues
 - **Tokens**: `--garden-leaf`, `--garden-earth`, `--garden-sun`, `--garden-sky`, `--garden-bloom`
 
-## 🚀 Getting Started
-
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Start development server: `npm run dev`
-4. Open [http://localhost:5173](http://localhost:5173)
 
 > **Note**: Backend services (auth, database, AI, weather) are powered by Lovable Cloud and work automatically.
 
