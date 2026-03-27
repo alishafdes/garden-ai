@@ -187,10 +187,16 @@ const Dashboard = () => {
               )}
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={signOut}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setAdvisorOpen(true)}>
+              <Sparkles className="w-4 h-4 mr-2" />
+              Garden Advisor
+            </Button>
+            <Button variant="ghost" size="sm" onClick={signOut}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -406,6 +412,7 @@ const Dashboard = () => {
 
       <AddPlantDialog open={addPlantOpen} onOpenChange={setAddPlantOpen} />
       <PlantScannerDialog open={scannerOpen} onOpenChange={setScannerOpen} />
+      <PlantAdvisorDialog open={advisorOpen} onOpenChange={setAdvisorOpen} />
       <GardenSectionDialog
         open={sectionDialogOpen}
         onOpenChange={setSectionDialogOpen}
