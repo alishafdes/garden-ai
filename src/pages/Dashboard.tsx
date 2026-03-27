@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { LogOut, Sprout, Sun, Droplets, Calendar, Plus, Check, Leaf, MapPin, ScanLine, LayoutGrid, Pencil, Trash2 } from "lucide-react";
+import { LogOut, Sprout, Sun, Droplets, Calendar, Plus, Check, Leaf, MapPin, ScanLine, LayoutGrid, Pencil, Trash2, Sparkles } from "lucide-react";
 import { AddPlantDialog } from "@/components/AddPlantDialog";
 import { ProfileSetup } from "@/components/ProfileSetup";
 import { WeatherCard } from "@/components/WeatherCard";
 import { PlantScannerDialog } from "@/components/PlantScannerDialog";
 import { GardenSectionDialog } from "@/components/GardenSectionDialog";
+import { PlantAdvisorDialog } from "@/components/PlantAdvisorDialog";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
