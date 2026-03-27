@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [scannerOpen, setScannerOpen] = useState(false);
   const [sectionDialogOpen, setSectionDialogOpen] = useState(false);
   const [editingSection, setEditingSection] = useState<any>(null);
+  const [advisorOpen, setAdvisorOpen] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user?.id],
