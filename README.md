@@ -1,4 +1,4 @@
-# 🌿 GardenAI
+# 🌿 The Empathetic Gardener
 
 **AI-powered garden companion that makes plant care intuitive, personal, and delightful.**
 
