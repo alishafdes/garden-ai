@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { LogOut, Sprout, Sun, Droplets, Calendar, Plus, Check, Leaf, MapPin, ScanLine, LayoutGrid, Pencil, Trash2 } from "lucide-react";
+import { LogOut, Sprout, Sun, Droplets, Calendar, Plus, Check, Leaf, MapPin, ScanLine, LayoutGrid, Pencil, Trash2, Sparkles } from "lucide-react";
 import { AddPlantDialog } from "@/components/AddPlantDialog";
 import { ProfileSetup } from "@/components/ProfileSetup";
 import { WeatherCard } from "@/components/WeatherCard";
 import { PlantScannerDialog } from "@/components/PlantScannerDialog";
 import { GardenSectionDialog } from "@/components/GardenSectionDialog";
+import { PlantAdvisorDialog } from "@/components/PlantAdvisorDialog";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -22,6 +23,7 @@ const Dashboard = () => {
   const [scannerOpen, setScannerOpen] = useState(false);
   const [sectionDialogOpen, setSectionDialogOpen] = useState(false);
   const [editingSection, setEditingSection] = useState<any>(null);
+  const [advisorOpen, setAdvisorOpen] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user?.id],
@@ -185,10 +187,16 @@ const Dashboard = () => {
               )}
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={signOut}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setAdvisorOpen(true)}>
+              <Sparkles className="w-4 h-4 mr-2" />
+              Garden Advisor
+            </Button>
+            <Button variant="ghost" size="sm" onClick={signOut}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -404,6 +412,7 @@ const Dashboard = () => {
 
       <AddPlantDialog open={addPlantOpen} onOpenChange={setAddPlantOpen} />
       <PlantScannerDialog open={scannerOpen} onOpenChange={setScannerOpen} />
+      <PlantAdvisorDialog open={advisorOpen} onOpenChange={setAdvisorOpen} />
       <GardenSectionDialog
         open={sectionDialogOpen}
         onOpenChange={setSectionDialogOpen}
